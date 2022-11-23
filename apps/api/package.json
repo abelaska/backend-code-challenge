@@ -1,0 +1,19 @@
+{
+  "name": "@bcc/api",
+  "version": "0.0.0",
+  "description": "Backend Code Challenge API",
+  "license": "UNLICENSED",
+  "repository": "https://github.com/abelaska/backend-code-challenge",
+  "private": true,
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsup",
+    "start": "APP_NAME=api APP_VERSION=0.0.0 DATABASE_URL=file:$(git rev-parse --show-toplevel)/dev.db node dist",
+    "dev": "tsup --watch . --ignore-watch tests --on-success='pnpm start'"
+  },
+  "dependencies": {
+    "@bcc/fastify-bootstrap": "workspace:*",
+    "@bcc/schema": "workspace:*"
+  }
+}

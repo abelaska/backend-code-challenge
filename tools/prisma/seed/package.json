@@ -1,0 +1,14 @@
+{
+  "name": "@bcc/prisma-seed",
+  "version": "0.0.0",
+  "description": "Prisma schema seed",
+  "license": "UNLICENSED",
+  "repository": "https://github.com/abelaska/backend-code-challenge",
+  "private": true,
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "seed": "node -r esbuild-register src",
+    "analyze": "cross-env DATABASE_URL=file:../../dev.db node -r esbuild-register src/analyze.ts"
+  }
+}

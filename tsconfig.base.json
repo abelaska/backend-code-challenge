@@ -1,0 +1,33 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "allowSyntheticDefaultImports": true,
+    "noFallthroughCasesInSwitch": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "emitDecoratorMetadata": false,
+    "experimentalDecorators": false,
+    "importHelpers": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "types": ["node"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "paths": {
+      "@bcc/schema": ["libs/schema/src"],
+      "@bcc/prisma": ["libs/prisma/src"],
+      "@bcc/fastify-bootstrap": ["libs/fastify-bootstrap/src"]
+    }
+  },
+  "exclude": ["**/node_modules", "**/*.spec.ts"]
+}

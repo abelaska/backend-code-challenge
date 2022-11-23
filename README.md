@@ -31,3 +31,23 @@ Remember that our technology stack is:
 - PostgreSQL (Objection.js)
 
 You can use the framework that you prefer, but please write the challenge in JS or TS. You can choose PostgreSQL / MongoDB like database, be free but take in consideration the best database to store the data.
+
+# Solution
+
+Libraries do not have to be compiled to CommonJS because they are not supposed to be publicly available via an NPM registry.
+
+Used [Pothos](https://pothos-graphql.dev) GraphQL framework in favor of Nexus. Why? I always wanted to try Pothos and see how the code would look with this library; this was a great opportunity.
+
+## How to start this beast
+
+1. `nvm use` switch to required Node.js version
+2. `npm install -g pnpm` install `pnpm` tool (see <https://pnpm.io/installation>)
+3. `pnpm i` install project dependencies 
+4. `pnpm demo` build and run the project, or you can do it manually step by step:
+   1. build the project `pnpm build`
+   2. run unit and e2e tests `pnpm test` (optional)
+   3. init database `pnpm db:init`
+   4. seed database `pnpm db:seed`
+   5. and start the API service `pnpm start`
+
+GraphQL endpoint is available at `http://localhost:3000/graphql`

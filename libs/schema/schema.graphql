@@ -1,0 +1,64 @@
+type Mutation {
+  toggleFavorite(id: ID!): Pokemon
+}
+
+type Pokemon {
+  evolutionRequirements: PokemonEvolutionRequirements
+  evolutions: [PokemonEvolution!]
+  favorite: Boolean!
+  fleeRate: Float!
+  height: PokemonHeight!
+  id: ID!
+  maxCP: Int!
+  maxHP: Int!
+  name: String!
+  previousEvolutions: [PokemonEvolution!]
+  resistant: [String!]!
+  types: [String!]!
+  weaknesses: [String!]!
+  weight: PokemonWeight!
+}
+
+type PokemonEvolution {
+  id: ID!
+  nextPokemon: Pokemon
+  previousPokemon: Pokemon
+}
+
+"""Pokemon evolution requirements"""
+type PokemonEvolutionRequirements {
+  amount: Int!
+  name: String!
+}
+
+"""Pokemon height (minimum, maximum)"""
+type PokemonHeight {
+  maximum: String!
+  minimum: String!
+}
+
+type PokemonType {
+  id: ID!
+  name: String!
+}
+
+"""Pokemon weight (minimum, maximum)"""
+type PokemonWeight {
+  maximum: String!
+  minimum: String!
+}
+
+input PokemonsInputType {
+  favorite: Boolean
+  name: String
+  skip: Int
+  take: Int
+  types: [String!]
+}
+
+type Query {
+  pokemonById(id: ID!): Pokemon
+  pokemonByName(name: String!): Pokemon
+  pokemonTypes: [PokemonType!]!
+  pokemons(input: PokemonsInputType!): [Pokemon!]
+}

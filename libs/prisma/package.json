@@ -1,0 +1,15 @@
+{
+  "name": "@bcc/prisma",
+  "version": "0.0.0",
+  "description": "Prisma schema",
+  "license": "UNLICENSED",
+  "repository": "https://github.com/abelaska/backend-code-challenge",
+  "private": true,
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "generate": "prisma generate --schema=schema.prisma",
+    "init": "prisma migrate dev --name init --schema schema.prisma",
+    "reset": "prisma migrate reset -f --schema schema.prisma"
+  }
+}

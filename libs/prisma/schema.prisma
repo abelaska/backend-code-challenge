@@ -1,0 +1,159 @@
+generator client {
+  provider        = "prisma-client-js"
+  binaryTargets   = ["native"]
+  previewFeatures = ["tracing"]
+  relationMode    = "prisma"
+}
+
+generator pothos {
+  provider     = "prisma-pothos-types"
+  output       = "./src/generated/types.d.ts"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Pokemon {
+  id                          Int                          @id @default(autoincrement())
+  name                        String                       @unique
+  favorite                    Boolean                      @default(false)
+  weightMinimum               Decimal                      @map("weight_minimum_kg")
+  weightMaximum               Decimal                      @map("weight_maximum_kg")
+  heightMinimum               Decimal                      @map("height_minimum_m")
+  heightMaximum               Decimal                      @map("height_maximum_m")
+  fleeRate                    Decimal                      @map("flee_rate")
+  maxCP                       Int                          @map("max_cp")
+  maxHP                       Int                          @map("max_hp")
+  classification              PokemonClassification        @relation(fields: [classificationId], references: [id])
+  classificationId            Int                          @map("classification_id")
+  evolutionRequirements       PokemonEvolutionRequirement? @relation(fields: [evolutionRequirementsId], references: [id])
+  evolutionRequirementsId     Int?                         @map("evolution_requirements_id")
+  evolutionRequirementsAmount Int?                         @map("evolution_requirements_amount")
+  attacks                     PokemonsOnPokemonAttacks[]
+  evolutions                  PokemonEvolution[]           @relation("pokemonCurrent")
+  nextEvolutions              PokemonEvolution[]           @relation("pokemonNext")
+  previousEvolutions          PokemonEvolution[]           @relation("pokemonPrevious")
+  types                       PokemonsOnPokemonType[]
+  resistant                   PokemonResistant[]
+  weaknesses                  PokemonWeakness[]
+
+  @@map("pokemons")
+  @@index([favorite])
+}
+
+model PokemonEvolutionRequirement {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
+  Pokemon Pokemon[]
+
+  @@map("pokemon_evolution_requirements")
+}
+
+model PokemonType {
+  id                    Int                     @id @default(autoincrement())
+  name                  String                  @unique(sort: Asc)
+  pokemonsOnPokemonType PokemonsOnPokemonType[]
+
+  @@map("pokemon_types")
+}
+
+model PokemonsOnPokemonType {
+  pokemon       Pokemon     @relation(fields: [pokemonId], references: [id])
+  pokemonId     Int         @map("pokemon_id")
+  type          PokemonType @relation(fields: [pokemonTypeId], references: [id])
+  pokemonTypeId Int         @map("pokemon_type_id")
+
+  @@id([pokemonId, pokemonTypeId])
+  @@map("pokemons_on_pokemon_types")
+}
+
+model PokemonFeature {
+  id         Int                @id @default(autoincrement())
+  name       String             @unique
+  weaknesses PokemonWeakness[]
+  resistants PokemonResistant[]
+
+  @@map("pokemon_features")
+}
+
+model PokemonWeakness {
+  pokemon          Pokemon        @relation(fields: [pokemonId], references: [id])
+  pokemonId        Int            @map("pokemon_id")
+  feature          PokemonFeature @relation(fields: [pokemonFeatureId], references: [id])
+  pokemonFeatureId Int            @map("pokemon_feature_id")
+
+  @@id([pokemonId, pokemonFeatureId])
+  @@map("pokemon_weaknesses")
+}
+
+model PokemonResistant {
+  pokemon          Pokemon        @relation(fields: [pokemonId], references: [id])
+  pokemonId        Int            @map("pokemon_id")
+  feature          PokemonFeature @relation(fields: [pokemonFeatureId], references: [id])
+  pokemonFeatureId Int            @map("pokemon_feature_id")
+
+  @@id([pokemonId, pokemonFeatureId])
+  @@map("pokemon_resistants")
+}
+
+model PokemonClassification {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  pokemons Pokemon[]
+
+  @@map("pokemon_classifications")
+}
+
+model PokemonAttackCategory {
+  id      Int             @id @default(autoincrement())
+  name    String          @unique
+  attacks PokemonAttack[]
+
+  @@map("pokemon_attack_categories")
+}
+
+model PokemonAttackType {
+  id      Int             @id @default(autoincrement())
+  name    String          @unique
+  attacks PokemonAttack[]
+
+  @@map("pokemon_attack_types")
+}
+
+model PokemonAttack {
+  id                       Int                        @id @default(autoincrement())
+  name                     String                     @unique
+  type                     PokemonAttackType          @relation(fields: [pokemonAttackTypeId], references: [id])
+  pokemonAttackTypeId      Int                        @map("pokemon_attack_type_id")
+  damage                   Int
+  category                 PokemonAttackCategory      @relation(fields: [pokemonAttackCategoryId], references: [id])
+  pokemonAttackCategoryId  Int                        @map("pokemon_attack_category_id")
+  pokemonsOnPokemonAttacks PokemonsOnPokemonAttacks[]
+
+  @@map("pokemon_attacks")
+}
+
+model PokemonsOnPokemonAttacks {
+  pokemon         Pokemon       @relation(fields: [pokemonId], references: [id])
+  pokemonId       Int           @map("pokemon_id")
+  attack          PokemonAttack @relation(fields: [pokemonAttackId], references: [id])
+  pokemonAttackId Int           @map("pokemon_attack_id")
+
+  @@id([pokemonId, pokemonAttackId])
+  @@map("pokemons_on_pokemon_attacks")
+}
+
+model PokemonEvolution {
+  id                Int      @id @default(autoincrement())
+  pokemon           Pokemon  @relation(fields: [pokemonId], references: [id], name: "pokemonCurrent")
+  pokemonId         Int      @map("pokemon_id")
+  previousPokemon   Pokemon? @relation(fields: [previousPokemonId], references: [id], name: "pokemonPrevious")
+  previousPokemonId Int?     @map("pokemon_previous_id")
+  nextPokemon       Pokemon? @relation(fields: [nextPokemonId], references: [id], name: "pokemonNext")
+  nextPokemonId     Int?     @map("pokemon_next_id")
+
+  @@unique([pokemonId, previousPokemonId, nextPokemonId])
+  @@map("pokemon_evolutions")
+}

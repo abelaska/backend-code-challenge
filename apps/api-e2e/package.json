@@ -1,0 +1,12 @@
+{
+  "name": "@bcc/api-e2e",
+  "version": "0.0.0",
+  "description": "Backend Code Challenge API E2E tests",
+  "license": "UNLICENSED",
+  "repository": "https://github.com/abelaska/backend-code-challenge",
+  "private": true,
+  "dependencies": {
+    "@bcc/api": "workspace:*",
+    "@bcc/fastify-bootstrap": "workspace:*"
+  }
+}

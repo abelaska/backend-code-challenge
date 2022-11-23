@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+pnpm concurrently -n "commitlint,codeowners" \
+  "pnpm commitlint --from $(git merge-base origin/main HEAD) --to HEAD" \
+  "pnpm -s toolbox codeowners verify -s"
