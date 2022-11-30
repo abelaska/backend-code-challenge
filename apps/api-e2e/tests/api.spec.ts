@@ -1,56 +1,34 @@
-import type { FastifyInstance } from 'fastify';
-import { getPort, waitForPort } from 'get-port-please';
+import { fastify as createFastify } from 'fastify';
 import { execSync, ExecSyncOptions } from 'child_process';
 import { join } from 'path';
-import { GraphQLClient, gql } from 'graphql-request';
 import { onSetup } from '@bcc/api';
-import { fastifyBootstrap } from '@bcc/fastify-bootstrap';
 
-describe('bootstrap', () => {
-  let fastify: FastifyInstance;
-  let client: GraphQLClient;
+describe('api-e2e', () => {
+  const fastify = createFastify();
+
+  const graphql = async (query: string) => {
+    const rsp = await fastify.inject({
+      url: '/graphql',
+      method: 'POST',
+      payload: { query },
+    });
+    expect(rsp.statusCode).toBe(200);
+    return rsp.json().data;
+  };
 
   beforeAll(async () => {
-    const host = '127.0.0.1';
-    const port = await getPort();
-
     const opts: ExecSyncOptions = {
       cwd: join(__dirname, '..', '..', '..'),
       stdio: 'inherit',
-      env: process.env,
     };
-
     execSync('pnpm run --filter ./libs/prisma reset --skip-generate', opts);
     execSync('pnpm run --filter ./tools/prisma/seed seed', opts);
 
-    ({ fastify } = await fastifyBootstrap({ onSetup, host, port }));
-
-    await waitForPort(port, {
-      host,
-      delay: 100,
-      retries: 50,
-    });
-
-    client = new GraphQLClient(`http://${host}:${port}/graphql`);
+    await onSetup({ fastify });
   }, 15000);
-
-  afterAll(async () => {
-    if (fastify) {
-      await fastify.close();
-    }
-  }, 15000);
-
-  it('should ping the server', async () => {
-    const rsp = await fastify.inject({
-      method: 'GET',
-      path: '/health',
-    });
-    expect(rsp.statusCode).toBe(200);
-    expect(await rsp.json()).toEqual({ env: 'test' });
-  });
 
   it('should get list of pokemons types', async () => {
-    const data = await client.request(gql`
+    const data = await graphql(`
       {
         pokemonTypes {
           name
@@ -115,7 +93,7 @@ describe('bootstrap', () => {
   });
 
   it('should get pokemon by id', async () => {
-    const data = await client.request(gql`
+    const data = await graphql(`
       {
         pokemonById(id: "1") {
           id
@@ -132,7 +110,7 @@ describe('bootstrap', () => {
   });
 
   it('should get pokemon by name', async () => {
-    const data = await client.request(gql`
+    const data = await graphql(`
       {
         pokemonByName(name: "Bulbasaur") {
           id
@@ -149,7 +127,7 @@ describe('bootstrap', () => {
   });
 
   it('should get list of pokemons by name', async () => {
-    const data = await client.request(gql`
+    const data = await graphql(`
       {
         pokemons(input: { name: "saur" }) {
           id
@@ -176,7 +154,7 @@ describe('bootstrap', () => {
   });
 
   it('should get list of favorite pokemons (empty)', async () => {
-    const empty = await client.request(gql`
+    const empty = await graphql(`
       {
         pokemons(input: { favorite: true }) {
           id
@@ -184,13 +162,11 @@ describe('bootstrap', () => {
         }
       }
     `);
-    expect(empty).toEqual({
-      pokemons: [],
-    });
+    expect(empty).toEqual({ pokemons: [] });
   });
 
   it('should get list of non-favorite pokemons (first page)', async () => {
-    const empty = await client.request(gql`
+    const empty = await graphql(`
       {
         pokemons(input: { favorite: false, skip: 0, take: 2 }) {
           id
@@ -213,7 +189,7 @@ describe('bootstrap', () => {
   });
 
   it('should mutate favorite', async () => {
-    const mutation = await client.request(gql`
+    const mutation = await graphql(`
       mutation {
         toggleFavorite(id: "1") {
           id
@@ -228,7 +204,7 @@ describe('bootstrap', () => {
       },
     });
 
-    const updated = await client.request(gql`
+    const updated = await graphql(`
       {
         pokemons(input: { favorite: true }) {
           id
@@ -247,7 +223,7 @@ describe('bootstrap', () => {
       ],
     });
 
-    const mutation2 = await client.request(gql`
+    const mutation2 = await graphql(`
       mutation {
         toggleFavorite(id: "1") {
           id
@@ -262,7 +238,7 @@ describe('bootstrap', () => {
       },
     });
 
-    const empty = await client.request(gql`
+    const empty = await graphql(`
       {
         pokemons(input: { favorite: true }) {
           id
@@ -271,11 +247,9 @@ describe('bootstrap', () => {
         }
       }
     `);
-    expect(empty).toEqual({
-      pokemons: [],
-    });
+    expect(empty).toEqual({ pokemons: [] });
 
-    const pokemon = await client.request(gql`
+    const pokemon = await graphql(`
     {
       pokemonById(id: "1") {
         id
@@ -294,7 +268,7 @@ describe('bootstrap', () => {
   });
 
   it('should get list of pokemons by types', async () => {
-    const data = await client.request(gql`
+    const data = await graphql(`
       {
         pokemons(input: { types: ["Bug","Fire"] }) {
           id
@@ -349,7 +323,7 @@ describe('bootstrap', () => {
   });
 
   it('should get a page of pokemons', async () => {
-    const page1 = await client.request(gql`
+    const page1 = await graphql(`
       {
         pokemons(input: { skip: 0, take: 2 }) {
           id
@@ -370,7 +344,7 @@ describe('bootstrap', () => {
       ],
     });
 
-    const page2 = await client.request(gql`
+    const page2 = await graphql(`
       {
         pokemons(input: { skip: 2, take: 3 }) {
           id

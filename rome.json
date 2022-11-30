@@ -4,7 +4,12 @@
     "indentStyle": "space",
     "indentSize": 2,
     "lineWidth": 120,
-    "ignore": ["**/node_modules/**", "**/dist/**", "pnpm-lock.yaml"]
+    "ignore": [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/generated/**",
+      "pnpm-lock.yaml"
+    ]
   },
   "javascript": {
     "formatter": {
@@ -22,6 +27,11 @@
         "noUnusedTemplateLiteral": "off"
       }
     },
-    "ignore": ["**/node_modules/**", "**/dist/**", "pnpm-lock.yaml"]
+    "ignore": [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/generated/**",
+      "pnpm-lock.yaml"
+    ]
   }
 }

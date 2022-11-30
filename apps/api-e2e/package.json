@@ -6,7 +6,6 @@
   "repository": "https://github.com/abelaska/backend-code-challenge",
   "private": true,
   "dependencies": {
-    "@bcc/api": "workspace:*",
-    "@bcc/fastify-bootstrap": "workspace:*"
+    "@bcc/api": "workspace:*"
   }
 }

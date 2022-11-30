@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyServerOptions, FastifyListenOptions, fastify } from 'fastify';
+import { FastifyInstance, FastifyServerOptions, FastifyListenOptions } from 'fastify';
 import Fastify from 'fastify';
 import fastifyOpenTelemetryPlugin from '@autotelic/fastify-opentelemetry';
 
@@ -9,7 +9,7 @@ export const commonTracingIgnoreRoutes = ['/health', '/favicon.ico'];
 
 export type FastifyBootstrapOnSetup = (
   services: FastifyServices,
-  serverListenOptions: FastifyListenOptions,
+  serverListenOptions?: FastifyListenOptions,
 ) => Promise<void>;
 
 export type FastifyBootstrapOnListening = (
