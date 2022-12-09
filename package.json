@@ -49,14 +49,17 @@
     "@pothos/plugin-prisma": "3.37.0",
     "@pothos/plugin-prisma-utils": "0.5.0",
     "@pothos/tracing-opentelemetry": "0.6.8",
+    "@pothos/plugin-relay": "3.30.0",
     "@pothos/plugin-tracing": "0.5.7",
+    "@pothos/plugin-validation": "3.8.7",
     "@pothos/plugin-with-input": "3.9.7",
     "fastify": "4.10.2",
     "fastify-plugin": "4.3.0",
     "pino": "8.7.0",
     "pino-pretty": "9.1.1",
     "source-map-support": "0.5.21",
-    "tslib": "2.4.0"
+    "tslib": "2.4.0",
+    "zod": "3.19.1"
   },
   "devDependencies": {
     "@babel/core": "7.20.2",
