@@ -2,6 +2,13 @@ type Mutation {
   toggleFavorite(id: ID!): Pokemon
 }
 
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+}
+
 type Pokemon {
   evolutionRequirements: PokemonEvolutionRequirements
   evolutions: [PokemonEvolution!]
@@ -60,5 +67,17 @@ type Query {
   pokemonById(id: ID!): Pokemon
   pokemonByName(name: String!): Pokemon
   pokemonTypes: [PokemonType!]!
-  pokemons(input: PokemonsInputType!): [Pokemon!]
+  pokemons(input: PokemonsInputType!): [Pokemon!]!
+  pokemonsConnection(after: String, before: String, favorite: Boolean, first: Int, last: Int, name: String, types: [String!]): QueryPokemonsConnection!
+}
+
+type QueryPokemonsConnection {
+  edges: [QueryPokemonsConnectionEdge]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type QueryPokemonsConnectionEdge {
+  cursor: String!
+  node: Pokemon!
 }

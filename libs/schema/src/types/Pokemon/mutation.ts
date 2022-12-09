@@ -1,17 +1,22 @@
-import { prisma } from '@bcc/prisma';
-import { builder } from '../../builder';
+import { prisma } from "@bcc/prisma";
+import { builder } from "../../builder";
 
 export default builder.mutationType({
   fields: (t) => ({
     toggleFavorite: t.prismaField({
-      type: 'Pokemon',
+      type: "Pokemon",
       nullable: true,
       args: {
-        id: t.arg.id({ required: true }),
+        id: t.arg.id({
+          required: true,
+          validate: {
+            regex: /[0-9]+/
+          },
+        }),
       },
       resolve: async (query, _root, args) => {
         const id = Number.parseInt(String(args.id), 10);
-        const pokemon = await prisma.pokemon.findUnique({
+        const pokemon = await prisma.pokemon.findUniqueOrThrow({
           select: { favorite: true },
           where: { id },
         });
